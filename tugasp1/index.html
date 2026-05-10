@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPB Solver - Tech Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;500&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Modifikasi Visual: Penambahan efek kedalaman dan glow */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            /* Efek radial agar tidak flat */
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            color: #f8fafc;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            /* Transparansi untuk efek glassmorphism */
+            backdrop-filter: blur(10px);
+            /* Blur background belakang card */
+            padding: 40px 30px;
+            border-radius: 20px;
+            /* Lebih membulat agar modern */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 210, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Neon Accent Bar */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #00d2ff, #9f1239, #3a7bd5);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            color: #00d2ff;
+            margin-bottom: 30px;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.75rem;
+            color: #38bdf8;
+            /* Warna label lebih kontras */
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            border-color: #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+            transform: translateY(-2px);
+            /* Sedikit naik saat fokus */
+        }
+
+        button {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            color: #0f172a;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            transition: 0.4s;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+            filter: brightness(1.1);
+        }
+
+        #display {
+            margin-top: 30px;
+            text-align: center;
+            min-height: 100px;
+        }
+
+        .res-container {
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .val {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.8);
+        }
+
+        .info {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .status-prima {
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+            border: 1px solid #4ade80;
+        }
+
+        .status-tidak {
+            background: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+            border: 1px solid #f87171;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>FPB Finder</h2>
+
+        <div class="input-group">
+            <label>Nilai A</label>
+            <input type="number" id="a" placeholder="Contoh: 12" required>
+        </div>
+
+        <div class="input-group">
+            <label>Nilai B</label>
+            <input type="number" id="b" placeholder="Contoh: 18" required>
+        </div>
+
+        <button onclick="hitung()">Calculate Now</button>
+
+        <div id="display"></div>
+    </div>
+
+    <script>
+        /* Kode JavaScript tetap sama agar fungsi tidak berubah */
+        function hitung() {
+            let n1 = Math.abs(parseInt(document.getElementById('a').value));
+            let n2 = Math.abs(parseInt(document.getElementById('b').value));
+
+            if (isNaN(n1) || isNaN(n2)) return;
+
+            let x = n1; let y = n2;
+            while (y !== 0) {
+                let t = x % y; x = y; y = t;
+            }
+
+            let isRelatif = (x === 1);
+            let out = document.getElementById('display');
+
+            out.innerHTML = `
+            <div class="res-container">
+                <span style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 5px;">Greatest Common Divisor:</span>
+                <span class="val">${x}</span>
+                <div style="margin-top: 10px;">
+                    <span class="info ${isRelatif ? 'status-prima' : 'status-tidak'}">
+                        ${isRelatif ? '● RELATIF PRIMA' : '○ TIDAK RELATIF PRIMA'}
+                    </span>
+                </div>
+            </div>
+        `;
+        }
+    </script>
+
+</body>
+
+</html>
