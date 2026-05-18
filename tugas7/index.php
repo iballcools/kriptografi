@@ -1,25 +1,17 @@
 <?php
-// ==========================================
-// Project: Praktikum Kriptografi SSL Generator
-// Version: Client-Side Simulation (No OpenSSL Required)
-// ==========================================
-
 $output = "Silakan isi form dan klik Generate";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 1. Menangkap data dari Form
     $country      = strtoupper(trim((string)$_POST['country']));
     $state        = trim((string)$_POST['state']);
     $locality     = trim((string)$_POST['locality']);
     $organization = trim((string)$_POST['organization']);
     $commonName   = trim((string)$_POST['commonName']);
 
-    // 2. Simulasi Output Sertifikat (Identik secara visual dengan X.509)
     $privKey = "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDQj\n[Simulated RSA 2048-bit Key for " . $commonName . "]\n-----END PRIVATE KEY-----";
     
     $cert = "-----BEGIN CERTIFICATE-----\nMIIDpTCCAo2gAwIBAgIUL3k8VzY1MzAyOTM4NDY0NTI3ODIwMTkwDQY\n[Generated for: " . $organization . "]\n[Location: " . $locality . ", " . $country . "]\n-----END CERTIFICATE-----";
 
-    // 3. Susun ke Terminal Output
     $output = "IDENTITAS CSR BERHASIL DISUSUN:\n";
     $output .= "C=$country, ST=$state, L=$locality, O=$organization, CN=$commonName\n\n";
     $output .= "--- PRIVATE KEY ---\n" . $privKey . "\n\n";
@@ -50,14 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="container">
     <div class="header">
-        <h2 style="margin:0;"># SSL Generator v1.0</h2>
-        <p style="margin:5px 0 0; font-size: 13px; opacity: 0.8;">Praktikum Kriptografi - Simulation Mode</p>
+        <h2 style="margin:0;">SSL Generator v1.0</h2>
+        <p style="margin:5px 0 0; font-size: 13px; opacity: 0.8;">Iqbal Syafra Dilla - Praktikum Kriptografi - Simulation Mode</p>
     </div>
 
     <div class="content">
         <form method="POST">
             <div class="form-grid">
-                <div><label>Negara (ID)</label><input type="text" name="country" value="ID" required></div>
+                <div><label>Negara (ID)</label><input type="text" name="country" placeholder="Input Negara" required></div>
                 <div><label>Provinsi</label><input type="text" name="state" placeholder="Input Provinsi" required></div>
                 <div><label>Kota</label><input type="text" name="locality" placeholder="Input Kota" required></div>
                 <div><label>Organisasi</label><input type="text" name="organization" placeholder="Input Nama Organisasi" required></div>
